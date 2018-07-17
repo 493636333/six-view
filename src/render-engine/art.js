@@ -1,5 +1,5 @@
 import template from 'art-template';
 
-export default function (content) {
-    return template.compile(content);
+export default function (content, options) {
+    return template.compile(content, options);
 }

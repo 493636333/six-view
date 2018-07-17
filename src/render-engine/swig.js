@@ -1,5 +1,5 @@
 import swig from 'swig';
 
-export default function (content) {
-    return swig.compile(content);
+export default function (content, options) {
+    return swig.compile(content, options);
 }
