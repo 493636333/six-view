@@ -1,0 +1,51 @@
+<html>
+    <head>
+        <script src="http://s3plus.meituan.net/v1/mss_c4375b35f5cb4e678b5b55a48c40cf9d/waimai-sfe-six/index.min.js"></script>
+    </head>
+    <body>
+        {{name}}
+    </body>
+    <script>
+    function ajax(Url,successFn,failureFn) {
+            //1.创建XMLHttpRequest对象
+            var xhr = null;
+            if (window.XMLHttpRequest) {
+                xhr = new XMLHttpRequest();
+            } else {
+                xhr = new ActiveXObject('Microsoft.XMLHTTP');
+            }
+            //2.打开与服务器的链接
+            xhr.open('get', Url, true);
+            
+            //3.发送给服务器
+            xhr.send(null);
+
+            //4.响应就绪
+            xhr.onreadystatechange = function(e) {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        successFn(xhr.responseText);
+                    } else {
+                        if (failureFn) {
+                            failureFn(e);
+                        } else {
+                            alert(xhr.status);
+                        }
+                    }
+                }
+            }
+        }
+
+        ajax('/a', function(text) {
+            console.log(text);
+        })
+        ajax('/b', function(text) {
+            console.log(text);
+        })
+        ajax('/c', function(text) {
+            console.log(text);
+        }, function(e) {
+            console.log(e);
+        })
+    </script>
+</html>

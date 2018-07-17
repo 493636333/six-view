@@ -1,0 +1,38 @@
+{
+  "name": "six-view",
+  "version": "0.0.1",
+  "description": "six-view",
+  "main": "build/index.js",
+  "scripts": {
+    "start": "node build/test/index.js",
+    "test": "mocha build/test.js",
+    "build": "babel src --out-dir build & cp -r src/test/view build/test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/493636333/six-view.git"
+  },
+  "keywords": [
+    "six",
+    "view"
+  ],
+  "author": "liyong",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/493636333/six-view/issues"
+  },
+  "homepage": "https://github.com/493636333/six-view#readme",
+  "dependencies": {
+    "art-template": "^4.12.2",
+    "handlebars": "^4.0.11",
+    "lodash": "^4.17.10",
+    "lru-cache": "^4.1.3",
+    "swig": "^1.4.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.2",
+    "koa": "^2.5.2"
+  }
+}
