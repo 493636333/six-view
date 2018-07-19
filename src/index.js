@@ -34,6 +34,7 @@ const defaultConf = {
     },
     endCallBack: 'six.end',
     callback: 'six.register',
+    clientPackageUrl: 'http://s3plus.meituan.net/v1/mss_c4375b35f5cb4e678b5b55a48c40cf9d/waimai-sfe-six/index.min.js'
 };
 
 export default class View {
@@ -55,7 +56,11 @@ export default class View {
     }
 
     getUrls(data) {
-        let str = '<head><script>window.__SIX_URLS=';
+        const {
+            clientPackageUrl
+        } = this.conf;
+
+        let str = `<head><script src="${clientPackageUrl}"></script><script>window.__SIX_URLS=`;
         data = Object.keys(data);
         str += JSON.stringify(data);
         str += '</script>';
