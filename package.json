@@ -1,6 +1,6 @@
 {
   "name": "six-view",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "six-view",
   "main": "build/index.js",
   "scripts": {
