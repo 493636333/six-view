@@ -30,6 +30,8 @@ app.use((ctx, next) => {
             '/a': getPromise('a', 1000),
             '/b': getPromise('b', 2000),
         });
+    } else if (ctx.path == '/a') {
+        ctx.render('a.html', null, {cache: false});
     }
 });
 

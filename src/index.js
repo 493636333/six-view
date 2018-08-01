@@ -12,6 +12,7 @@ const defaultConf = {
     extentions: ['html', 'hb', 'swig', 'art'],
     cache: true,
     cacheLength: 20 * 1024 * 1024,
+    cacheAge: 1000 * 60 * 60 * 24 * 300,
     rootPath: __dirname,
     renderEngine: engine,
     renderEngineOpt: {},
@@ -45,12 +46,13 @@ export default class View {
         this.context = ctx;
         this.conf = assign({}, defaultConf, conf);
 
-        if (this.conf.cache) {
+        if (!cache && this.conf.cache) {
             cache = NodeLRU({
                 length: (item) => {
                     return item && item.length || 0;
                 },
-                max: this.conf.cacheLength
+                max: this.conf.cacheLength,
+                maxAge: this.conf.cacheAge
             });
         }
     }
@@ -72,17 +74,25 @@ export default class View {
         return Object.assign({}, ctx.state, data);
     }
 
-    render(fileName, data) {
+    render(fileName, data, runTimeConf) {
         const ctx = this.context;
-        const fileData = this.getFileData(fileName);
-        data = this.getAssign(data);
+        const conf = assign({}, this.conf, runTimeConf);
+        const extname = path.extname(fileName);
+
+        if (!conf.cache && extname === '.html') {
+            ctx.body = this.getHtmlFileDataWithoutCache(fileName, conf);
+        } else {
+            const fileData = this.getFileData(fileName, conf);
+            data = this.getAssign(data);
+            ctx.body = fileData.render(data) + '</html>';
+        }
         ctx.type = 'html';
-        ctx.body = fileData.render(data) + '</html>';
     }
 
-    aRender(fileName, data, advancedData) {
+    aRender(fileName, data, advancedData, runTimeConf) {
         const ctx = this.context;
-        const fileData = this.getFileData(fileName);
+        const conf = assign({}, this.conf, runTimeConf);
+        const fileData = this.getFileData(fileName, conf);
         data = this.getAssign(data);
         ctx.type = 'html';
         ctx.set('Transfer-Encoding', 'chunked');
@@ -148,10 +158,19 @@ export default class View {
         buffer.push(null);
     }
 
-    getFileData(fileName) {
-        const conf = this.conf;
+    // 1. 没有开启渲染优化 2.纯html，不需要编译
+    getHtmlFileDataWithoutCache(fileName, conf) {
+        conf.returnStream = true;
+
+        const { content }  = this.getFile(fileName, conf);
+        return content;
+    }
+
+    getFileData(fileName, runTimeConf) {
+        const conf = runTimeConf || this.conf;
         let data;
-        if (cache && (data = cache.get(fileName))) {
+
+        if (conf.cache && (data = cache.get(fileName))) {
            return data;
         }
         const { content, extention }  = this.getFile(fileName);
@@ -175,17 +194,17 @@ export default class View {
             render: compiled,
         };
 
-        if (cache) {
+        if (conf.cache) {
             cache.set(fileName, res);
         }
         return res;
     }
 
-    getFile(fileName) {
-        const conf = this.conf;
+    getFile(fileName, conf) {
+        conf = conf || this.conf;
         fileName = conf.resolveFileName(fileName, conf);
         return {
-            content: conf.loader(fileName),
+            content: conf.loader(fileName, conf),
             extention: path.extname(fileName),
         };
     }

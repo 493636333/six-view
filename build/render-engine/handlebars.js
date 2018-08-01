@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-exports.default = function (content) {
-    return _handlebars2.default.compile(content);
+exports.default = function (content, options) {
+    return _handlebars2.default.compile(content, options);
 };
 
 var _handlebars = require('handlebars');
